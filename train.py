@@ -8,7 +8,7 @@ Model = model()
 print('2、构造模型完成')
 # # with tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):
 # opt_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(Model.all_loss)
-saver = tf.train.Saver(max_to_keep=3)
+saver = tf.train.Saver(max_to_keep=10)
 init_op=tf.global_variables_initializer()
 with tf.Session() as sess:
     merged = tf.summary.merge_all()

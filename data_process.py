@@ -3,6 +3,8 @@ from bosonnlp import BosonNLP
 import numpy as np
 from config import *
 import xlrd
+import random
+from sklearn.metrics import accuracy_score,f1_score,recall_score,precision_score
 
 def load_data(filepath):
     with open(filepath+'train.json','r',encoding='utf-8') as data_train,open(filepath+'test.json','r',encoding='utf-8') as data_test,open(filepath+'data_train.txt','w+',encoding='utf-8') as train_data,open(filepath+'data_test.txt','w+',encoding='utf-8') as test_data:
@@ -473,7 +475,48 @@ def read_file(filepath):
 
         return train_data,train_label,test_data,test_label,map_int
 
+def get_epoch(data,label):
+    data_s = data
+    data_label = label
+    epoch_s = []
+    epoch_label = []
+    list_int = [i for i in range(len(data_label))]
+    while len(list_int) > batch_size:
+        random_int = list_int[0:batch_size]
+        batch_s = np.asarray(data_s)[random_int]
+        batch_label = np.asarray(data_label)[random_int]
+        list_int = list_int[batch_size:]
+        epoch_s.append(batch_s)
+        epoch_label.append(batch_label)
+    return epoch_s,epoch_label, len(epoch_s)
 
+def get_batch_test(data,label,i):
+    batch_s = np.asarray(data)[i]
+    batch_label = np.asarray(label)[i]
+    return batch_s,batch_label
+
+def zhibiao(label,pre_rule,pre_zm,pre_xq):
+    rule_true = list([temp[0] for temp in label])
+    zm_true = list([temp[1] for temp in label])
+    xq_true = list([temp[2] for temp in label])
+    # 准确率
+    acc_rule = accuracy_score(y_true=rule_true, y_pred=pre_rule)
+    acc_zm = accuracy_score(y_true=zm_true, y_pred=pre_zm)
+    acc_xq = accuracy_score(y_true=xq_true, y_pred=pre_xq)
+    # 宏平均F1
+    F1_rule = f1_score(y_true=rule_true, y_pred=pre_rule, average='macro')
+    F1_zm = f1_score(y_true=zm_true, y_pred=pre_zm, average='macro')
+    F1_xq = f1_score(y_true=xq_true, y_pred=pre_xq, average='macro')
+    # 宏平均准确率
+    MP_rule = precision_score(y_true=rule_true, y_pred=pre_rule, average='macro')
+    MP_zm = precision_score(y_true=zm_true, y_pred=pre_zm, average='macro')
+    MP_xq = precision_score(y_true=xq_true, y_pred=pre_xq, average='macro')
+    # 宏平均召回率
+    MR_rule = recall_score(y_true=rule_true, y_pred=pre_rule, average='macro')
+    MR_zm = recall_score(y_true=zm_true, y_pred=pre_zm, average='macro')
+    MR_xq = recall_score(y_true=xq_true, y_pred=pre_xq, average='macro')
+    all_score = [acc_rule,MP_rule,MR_rule,F1_rule,acc_zm,MP_zm,MR_zm,F1_zm,acc_xq,MP_xq,MR_xq,F1_xq]
+    return all_score
 
 
 # if __name__=="__main__":

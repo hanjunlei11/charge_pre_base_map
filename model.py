@@ -230,14 +230,14 @@ class model():
     def attention(self,inputs,name):
         with tf.variable_scope(name+'att'):
             size = inputs.shape[-1].value
-            transfor_data = self.fully_conacation(input=inputs,haddin_size=size,training=self.is_trainning,keep_rate=self.keep_rate)
+            transfor_data = self.fully_conacation(input=inputs,haddin_size=size,training=self.is_trainning,keep_rate=self.keep_rate,activation='tanh')
             u_atten = tf.get_variable(name=name+'att_vocter', shape=(1, size), dtype=tf.float32)
             att_weght = tf.reduce_sum(tf.multiply(transfor_data, u_atten), keep_dims=True, axis=2)
             att_weght = tf.nn.softmax(att_weght,dim=1)
             att_sum = tf.reduce_sum(tf.multiply(inputs, att_weght), axis=1)
         return att_sum
 
-    def conv1D(self, inputs, kernel_shape,strides,kernel_name, padding='valid',activation='leaky_relu', dropuot_rate=1.0):
+    def conv1D(self, inputs, kernel_shape,strides,kernel_name, padding='VALID',activation='relu', dropuot_rate=1.0):
         with tf.name_scope('conv1d_'+kernel_name):
             kernel = tf.get_variable(dtype=tf.float32, shape=kernel_shape, name=kernel_name)
             conv_output = tf.nn.conv1d(value=inputs, filters=kernel, stride=strides, padding=padding)
@@ -254,10 +254,9 @@ class model():
                 conv_output = tf.nn.dropout(conv_output, keep_prob=dropuot_rate)
             return conv_output
 
-
-
-# Model = model()
-# int_op = tf.global_variables_initializer()
-# with tf.Session() as sess:
-#     sess.run(int_op)
-#     sess.run(Model.encoder)
+if __name__=="__main__":
+    Model = model()
+    int_op = tf.global_variables_initializer()
+    with tf.Session() as sess:
+        sess.run(int_op)
+        sess.run(Model.sq_conv2)

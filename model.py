@@ -254,9 +254,9 @@ class model():
                 conv_output = tf.nn.dropout(conv_output, keep_prob=dropuot_rate)
             return conv_output
 
-if __name__=="__main__":
-    Model = model()
-    int_op = tf.global_variables_initializer()
-    with tf.Session() as sess:
-        sess.run(int_op)
-        sess.run(Model.sq_conv2)
+# if __name__=="__main__":
+#     Model = model()
+#     int_op = tf.global_variables_initializer()
+#     with tf.Session() as sess:
+#         sess.run(int_op)
+#         sess.run(Model.sq_conv2)
